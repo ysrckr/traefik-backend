@@ -6,10 +6,6 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
-    depends_on:
-      - backend
-    networks:
-      - traefik-global-proxy
     
     ports:
       - '3000:3000'
@@ -19,7 +15,6 @@ services:
       - 'traefik.http.routers.frontend.rule=Host(`www.yasarcakir.com`)'
       - 'traefik.http.routers.frontend.entrypoints=websecure'
       - 'traefik.http.routers.frontend.tls.certresolver=resolver'
-
   backend:
     container_name: backend
     build: 
