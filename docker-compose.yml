@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  frontend:
+    container_name: frontend
+    image: ghcr.io/ysrckr/traefik-frontend:1.0.0
+    depends_on:
+      - backend
+    networks:
+      - traefik-global-proxy
+    
+    ports:
+      - '3000:3000'
+
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.simple-fe.rule=Host(`www.yasarcakir.com`)'
+      - 'traefik.http.routers.simple-fe.entrypoints=websecure'
+      - 'traefik.http.routers.simple-fe.tls.certresolver=letsencrypt'
+
+  backend:
+    container_name: backend
+    image: ghcr.io/ysrckr/traefik-backend:1.0.0
+
+    environment:
+      - NODE_ENV=production
+    
+    ports:
+      - '4000:4000'
+
+    networks:
+      - traefik-global-proxy
+      - backend
+    
+    # Traefik stuff
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.simple-be.rule=Host(`api.yasarcakir.com`)' 
+      - 'traefik.http.routers.simple-be.entrypoints=websecure' 
+      - 'traefik.http.routers.simple-be.tls.certresolver=letsencrypt'
+
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    command:
+      - "traefik.enable=true" 
+      - "traefik.http.routers.traefik.rule=Host(`monitor.mydomain.com`)" 
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+    ports:
+      - '80:80'
+      - '443:443'
+
+    volumes:
+      - "./traefik.toml:/etc/traefik/traefik.toml"
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    
+networks:
+  traefik-global-proxy:
+    name: traefik-global-proxy
+  backend:
+
