@@ -18,7 +18,7 @@ jobs:
       run: echo "name=date::$(date +'%Y-%m-%d--%M-%S')" >> GITHUB_OUTPUT
       
     - name: Login to Github Container Registry
-      run: Run echo ${{secrets.TOKEN}} | docker login ghcr.io --username ${{github.actor}} --password-stdin
+      run: echo ${{secrets.TOKEN}} | docker login ghcr.io --username ${{github.actor}} --password-stdin
     
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/${{github.actor}}/traefik-backend:${{ steps.date.outputs.date }}
