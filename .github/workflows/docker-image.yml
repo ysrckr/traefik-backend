@@ -12,16 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Get current date # get the date of the build
-      id: date
-      run: echo "name=date::$(date +'%Y-%m-%d--%M-%S')" >> GITHUB_OUTPUT
       
     - name: Login to Github Container Registry
       run: echo ${{secrets.TOKEN}} | docker login ghcr.io --username ${{github.actor}} --password-stdin
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/${{github.actor}}/traefik-backend:${{ steps.date.outputs.date }}
+      run: docker build . --file Dockerfile --tag ghcr.io/${{github.actor}}/traefik-backend:latest
       
     - name: Push to Github Container Registry
-      run: docker push ghcr.io/${{github.actor}}/traefik-backend:${{ steps.date.outputs.date }}
+      run: docker push ghcr.io/${{github.actor}}/traefik-backend:latest
