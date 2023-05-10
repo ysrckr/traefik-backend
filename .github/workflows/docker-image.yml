@@ -13,8 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghrc.io/ysrckr/traefik-backend:$(date +%s)
+    - name: Get current date # get the date of the build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
       
     - name: Login to Github Container Registry
       uses: docker/login-action@v2
@@ -22,6 +23,9 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ghrc.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
       
     - name: Push to Github Container Registry
-      run: docker push ghrc.io/ysrckr/traefik-backend:$(date +%s)
+      run: docker push ghrc.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
