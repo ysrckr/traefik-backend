@@ -24,4 +24,4 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Push to Github Container Registry
-      run: docker push ghrc.io/ysrckr/traefik-backend
+      run: docker push ghrc.io/ysrckr/traefik-backend:$(date +%s)
