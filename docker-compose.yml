@@ -12,7 +12,9 @@ services:
 
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.frontend.rule=Host(`www.yasarcakir.com`)'
+      - 'traefik.http.routers.frontend.rule=Host(`yasarcakir.com`)'
+      - 'traefik.http.routers.frontend.entrypoints=web'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
   backend:
     container_name: backend
     build: 
@@ -29,6 +31,9 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.backend.rule=Host(`api.yasarcakir.com`)' 
+      - 'traefik.http.routers.backend.entrypoints=web'
+      - 'traefik.http.services.backend.loadbalancer.server.port=4000'
+
   traefik:
     image: traefik:latest
     container_name: traefik
