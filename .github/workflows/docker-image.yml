@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghrc.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
+      run: docker build . --file Dockerfile --tag ghcr.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
       
     - name: Push to Github Container Registry
-      run: docker push ghrc.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
+      run: docker push ghcr.io/ysrckr/traefik-backend:${{ steps.date.outputs.date }}
