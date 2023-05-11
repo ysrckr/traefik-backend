@@ -8,15 +8,15 @@ services:
     ports:
       - '3000:3000'
 
-    # labels:
-    #   - 'traefik.enable=true'
-    #   - "traefik.http.routers.frontend.rule=Host(`yasarcakir.com`) || Host(`www.yasarcakir.com`)"
-    #   - "traefik.http.middlewares.frontend-redirect.redirectregex.regex=^(https?://)www.(.*)$$"
-    #   - "traefik.http.middlewares.frontend-redirect.redirectregex.replacement=$${1}$${2}"
-    #   - "traefik.http.routers.frontend.middlewares=frontend-redirect"
-    #   - 'traefik.http.routers.frontend.entrypoints=websecure'
-    #   - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
-    #   - 'traefik.http.routers.frontend.tls.certresolver=myresolver'
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.http.routers.frontend.rule=Host(`yasarcakir.com`) || Host(`www.yasarcakir.com`)"
+      - "traefik.http.middlewares.frontend-redirect.redirectregex.regex=^(https?://)www.(.*)$$"
+      - "traefik.http.middlewares.frontend-redirect.redirectregex.replacement=$${1}$${2}"
+      - "traefik.http.routers.frontend.middlewares=frontend-redirect"
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.frontend.tls.certresolver=myresolver'
 
   backend:
     container_name: backend
@@ -28,12 +28,12 @@ services:
     ports:
       - '4000:4000'
 
-    # labels:
-    #   - 'traefik.enable=true'
-    #   - 'traefik.http.routers.backend.rule=Host(`api.yasarcakir.com`)'
-    #   - 'traefik.http.routers.backend.entrypoints=websecure'
-    #   - 'traefik.http.services.backend.loadbalancer.server.port=4000'
-    #   - 'traefik.http.routers.backend.tls.certresolver=myresolver'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=Host(`api.yasarcakir.com`)'
+      - 'traefik.http.routers.backend.entrypoints=websecure'
+      - 'traefik.http.services.backend.loadbalancer.server.port=4000'
+      - 'traefik.http.routers.backend.tls.certresolver=myresolver'
 
   traefik:
     image: traefik:latest
@@ -55,8 +55,6 @@ services:
       - '443:443'
 
     volumes:
-      - $PWD/traefik.toml:/etc/traefik/traefik.toml
-      - $PWD/traefik-providers.toml:/etc/traefik/traefik-frontend.toml
-      - $PWD/traefik-providers.toml:/etc/traefik/traefik-backend.toml
+      - ./traefik.toml:/traefik.toml
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
