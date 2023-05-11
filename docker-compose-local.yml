@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ../traefik-frontend
+      dockerfile: Dockerfile
+
+    ports:
+      - '3000:3000'
+
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.http.routers.frontend.rule=Host(`localhost`)"
+      - "traefik.http.middlewares.frontend-redirect.redirectregex.regex=^(https?://)www.(.*)$$"
+      - "traefik.http.middlewares.frontend-redirect.redirectregex.replacement=$${1}$${2}"
+      - "traefik.http.routers.frontend.middlewares=frontend-redirect"
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.frontend.tls.certresolver=myresolver'
+
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - NODE_ENV=production
+
+    ports:
+      - '4000:4000'
+
+    # Traefik stuff
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=Host(`api.localhost`)'
+      - 'traefik.http.routers.backend.entrypoints=websecure'
+      - 'traefik.http.services.backend.loadbalancer.server.port=4000'
+      - 'traefik.http.routers.backend.tls.certresolver=myresolver'
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=dev.yasarcakir@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+    ports:
+      - '80:80'
+      - '443:443'
+
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
