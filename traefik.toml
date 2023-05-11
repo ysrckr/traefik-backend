@@ -1,0 +1,23 @@
+[api]
+  dashboard = true
+
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+  [providers.file]
+    filename = "trafik-frontend.toml"
+    watch = true
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+  [entryPoints.websecure]
+    address = ":443"
+    [entryPoints.web.http.redirections.entryPoint]
+    to = "websecure"
+    scheme = "https"
+
+[certificatesResolvers.myresolver.acme]
+  email = "dev.yasarcakir@gmail.com"
+  storage = "/letsencrypt/acme.json"
+  [certificatesResolvers.myresolver.acme.tlschallenge]

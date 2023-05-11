@@ -1,0 +1,9 @@
+[traefik]
+  enable = true
+  [traefik.http.routers.backend]
+    entryPoints = "websecure"
+    rule = "Host(`api.yasarcakir.com`)"
+    [traefik.http.routers.backend.tls]
+      certResolver = "myresolver"
+    [traefik.http.routers.backend.loadbalancer.server]
+      port = 4000
