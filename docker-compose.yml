@@ -28,12 +28,12 @@ services:
     ports:
       - '4000:4000'
 
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.backend.rule=Host(`api.yasarcakir.com`)'
-      - 'traefik.http.routers.backend.entrypoints=websecure'
-      - 'traefik.http.services.backend.loadbalancer.server.port=4000'
-      - 'traefik.http.routers.backend.tls.certresolver=myresolver'
+    # labels:
+    #   - 'traefik.enable=true'
+    #   - 'traefik.http.routers.backend.rule=Host(`api.yasarcakir.com`)'
+    #   - 'traefik.http.routers.backend.entrypoints=websecure'
+    #   - 'traefik.http.services.backend.loadbalancer.server.port=4000'
+    #   - 'traefik.http.routers.backend.tls.certresolver=myresolver'
 
   traefik:
     image: traefik:latest
@@ -56,5 +56,6 @@ services:
 
     volumes:
       - ./traefik.toml:/traefik.toml
+      - ./traefik_dynamic.toml:/traefik_dynamic.toml
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
